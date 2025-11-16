@@ -7,7 +7,7 @@ editor: visual
 
 ## PASSO 1: CARREGAR PACOTES NECESSÁRIOS
 
-```{r}
+```{r message = FALSE, warning = FALSE}
 pacotes <- c("tidyverse", "missForest", "naniar", "VIM", "patchwork", "randomForest")
 if(sum(as.numeric(!pacotes %in% installed.packages())) != 0){
   instalador <- pacotes[!pacotes %in% installed.packages()]
@@ -19,7 +19,9 @@ lapply(pacotes, library, character.only = T)
 ```
 
 ## PASSO 2: CRIAR DADOS DE EXEMPLO COM MISSINGS
+
 Vamos criar um dataset que simula dados reais com relações não-lineares entre variáveis.
+
 ```{r}
 n <- 500  # Número de observações
 
@@ -52,7 +54,9 @@ glimpse(dados_completos)
 ```
 
 ## PASSO 3: INTRODUZIR DADOS FALTANTES DE FORMA REALISTA
+
 Criar cópia dos dados e introduzir missings usando `MCAR` (Missing Completely At Random) em algumas variáveis e `MAR` (Missing At Random) em outras - mais realista.
+
 ```{r}
 dados_com_missing <- dados_completos |> 
   mutate(
@@ -73,6 +77,7 @@ dados_com_missing <- dados_completos |>
 ```
 
 ## PASSO 4: ANÁLISE EXPLORATÓRIA DOS DADOS FALTANTES
+
 ```{r}
 # Contar missings por variável
 resumo_missing <- dados_com_missing |> 
@@ -89,7 +94,7 @@ resumo_missing <- dados_com_missing |>
 print(resumo_missing)
 ```
 
-```{r}
+```{r warning = FALSE, message = FALSE}
 # Visualização 1: Padrão de dados faltantes
 vis_missing_1 <- ggplot(dados_com_missing, 
                         aes(x = 1:nrow(dados_com_missing))) +
@@ -132,18 +137,18 @@ print(vis_missing_3)
 ```
 
 # PASSO 5: IMPUTAÇÃO COM RANDOM FOREST
+
 ```{r}
 # Converter região para factor (necessário para missForest)
 dados_para_imputar <- dados_com_missing |> 
   mutate(regiao = as.factor(regiao))
 ```
 
+Para executar imputação com `missForest` estabeleço os seguintes parâmetros: - `ntree`: número de árvores na floresta\
+- `mtry`: número de variáveis testadas em cada divisão\
+- `maxiter`: máximo de iterações\
+- `verbose`: mostrar progresso
 
-Para executar imputação com `missForest` estabeleço os seguintes parâmetros:
-- `ntree`: número de árvores na floresta  
-- `mtry`: número de variáveis testadas em cada divisão  
-- `maxiter`: máximo de iterações  
-- `verbose`: mostrar progresso  
 ```{r}
 resultado_imputacao <- missForest(
   xmis = as.data.frame(dados_para_imputar),
@@ -155,12 +160,14 @@ resultado_imputacao <- missForest(
 ```
 
 Agora vamos extrair dados imputados
+
 ```{r}
 dados_imputados <- as_tibble(resultado_imputacao$ximp) |> 
   mutate(regiao = as.character(regiao))
 ```
 
 ### Informações de Erros de imputação
+
 ```{r}
 cat("NRMSE (Normalized Root Mean Squared Error) para variáveis numéricas:\n")
 print(resultado_imputacao$OOBerror[1])  # Quanto menor, melhor
@@ -169,7 +176,9 @@ print(resultado_imputacao$OOBerror[2])  # Quanto menor, melhor
 ```
 
 ## PASSO 6: VALIDAÇÃO DA IMPUTAÇÃO
+
 Vamos comparar a distribuição das variáveis antes e depois da imputação.
+
 ```{r}
 # Identificar quais valores foram imputados
 dados_comparacao <- dados_completos |> 
@@ -265,6 +274,3 @@ print(vis_validacao_2)
 print(vis_validacao_3)
 print(vis_validacao_4)
 ```
-
-
-
