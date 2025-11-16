@@ -274,3 +274,172 @@ print(vis_validacao_2)
 print(vis_validacao_3)
 print(vis_validacao_4)
 ```
+
+## PASSO 7: MÉTRICAS QUANTITATIVAS DE VALIDAÇÃO
+```{r}
+# Função para calcular RMSE
+calcular_rmse <- function(original, imputado, indices_missing) {
+  valores_originais <- original[indices_missing]
+  valores_imputados <- imputado[indices_missing]
+  sqrt(mean((valores_originais - valores_imputados)^2))
+}
+
+# Função para calcular MAE
+calcular_mae <- function(original, imputado, indices_missing) {
+  valores_originais <- original[indices_missing]
+  valores_imputados <- imputado[indices_missing]
+  mean(abs(valores_originais - valores_imputados))
+}
+
+# Calcular métricas para cada variável
+indices_missing_renda <- which(is.na(dados_com_missing$renda))
+indices_missing_anos <- which(is.na(dados_com_missing$anos_estudo))
+indices_missing_score <- which(is.na(dados_com_missing$score_credito))
+indices_missing_gasto <- which(is.na(dados_com_missing$gasto_mensal))
+
+metricas_validacao <- tibble(
+  variavel = c("Renda", "Anos de Estudo", "Score de Crédito", "Gasto Mensal"),
+  rmse = c(
+    calcular_rmse(dados_completos$renda, dados_imputados$renda, 
+                  indices_missing_renda),
+    calcular_rmse(dados_completos$anos_estudo, dados_imputados$anos_estudo, 
+                  indices_missing_anos),
+    calcular_rmse(dados_completos$score_credito, dados_imputados$score_credito, 
+                  indices_missing_score),
+    calcular_rmse(dados_completos$gasto_mensal, dados_imputados$gasto_mensal, 
+                  indices_missing_gasto)
+  ),
+  mae = c(
+    calcular_mae(dados_completos$renda, dados_imputados$renda, 
+                 indices_missing_renda),
+    calcular_mae(dados_completos$anos_estudo, dados_imputados$anos_estudo, 
+                 indices_missing_anos),
+    calcular_mae(dados_completos$score_credito, dados_imputados$score_credito, 
+                 indices_missing_score),
+    calcular_mae(dados_completos$gasto_mensal, dados_imputados$gasto_mensal, 
+                 indices_missing_gasto)
+  )
+) %>%
+  mutate(
+    rmse = round(rmse, 2),
+    mae = round(mae, 2)
+  )
+
+print(metricas_validacao)
+```
+
+```{r}
+# Visualização 8: Métricas de erro
+vis_metricas <- metricas_validacao %>%
+  pivot_longer(cols = c(rmse, mae), 
+               names_to = "metrica", 
+               values_to = "valor") %>%
+  ggplot(aes(x = variavel, y = valor, fill = metrica)) +
+  geom_col(position = "dodge", alpha = 0.8) +
+  geom_text(aes(label = round(valor, 1)), 
+            position = position_dodge(width = 0.9),
+            vjust = -0.5, size = 3) +
+  scale_fill_manual(
+    values = c("rmse" = "#D6604D", "mae" = "#4393C3"),
+    labels = c("rmse" = "RMSE", "mae" = "MAE")
+  ) +
+  labs(title = "Erro de Imputação por Variável",
+       subtitle = "RMSE = Root Mean Squared Error | MAE = Mean Absolute Error",
+       x = NULL,
+       y = "Valor do Erro",
+       fill = "Métrica") +
+  theme_minimal(base_size = 12) +
+  theme(plot.title = element_text(face = "bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom")
+
+print(vis_metricas)
+```
+
+## PASSO 8: COMPARAÇÃO COM MÉTODO SIMPLES (MÉDIA)
+```{r}
+# Imputação simples por média
+dados_imputados_media <- dados_com_missing %>%
+  mutate(
+    renda = if_else(is.na(renda), mean(renda, na.rm = TRUE), renda),
+    anos_estudo = if_else(is.na(anos_estudo), 
+                          mean(anos_estudo, na.rm = TRUE), anos_estudo),
+    score_credito = if_else(is.na(score_credito), 
+                            mean(score_credito, na.rm = TRUE), score_credito),
+    gasto_mensal = if_else(is.na(gasto_mensal), 
+                           mean(gasto_mensal, na.rm = TRUE), gasto_mensal)
+  )
+
+# Calcular métricas para imputação por média
+metricas_media <- tibble(
+  variavel = c("Renda", "Anos de Estudo", "Score de Crédito", "Gasto Mensal"),
+  rmse_rf = metricas_validacao$rmse,
+  rmse_media = c(
+    calcular_rmse(dados_completos$renda, dados_imputados_media$renda, 
+                  indices_missing_renda),
+    calcular_rmse(dados_completos$anos_estudo, 
+                  dados_imputados_media$anos_estudo, indices_missing_anos),
+    calcular_rmse(dados_completos$score_credito, 
+                  dados_imputados_media$score_credito, indices_missing_score),
+    calcular_rmse(dados_completos$gasto_mensal, 
+                  dados_imputados_media$gasto_mensal, indices_missing_gasto)
+  )
+) %>%
+  mutate(
+    rmse_media = round(rmse_media, 2),
+    melhoria_percentual = round((rmse_media - rmse_rf) / rmse_media * 100, 1)
+  )
+
+print(metricas_media)
+
+# Visualização 9: Comparação de métodos
+vis_comparacao <- metricas_media %>%
+  select(variavel, rmse_rf, rmse_media) %>%
+  pivot_longer(cols = starts_with("rmse"), 
+               names_to = "metodo", 
+               values_to = "rmse") %>%
+  mutate(metodo = recode(metodo,
+                         "rmse_rf" = "Random Forest",
+                         "rmse_media" = "Média Simples")) %>%
+  ggplot(aes(x = variavel, y = rmse, fill = metodo)) +
+  geom_col(position = "dodge", alpha = 0.8) +
+  geom_text(aes(label = round(rmse, 1)), 
+            position = position_dodge(width = 0.9),
+            vjust = -0.5, size = 3) +
+  scale_fill_manual(values = c("Random Forest" = "#1B9E77", 
+                               "Média Simples" = "#D95F02")) +
+  labs(title = "Comparação de Métodos de Imputação",
+       subtitle = "Random Forest consistentemente supera imputação por média",
+       x = NULL,
+       y = "RMSE",
+       fill = "Método") +
+  theme_minimal(base_size = 12) +
+  theme(plot.title = element_text(face = "bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom")
+
+print(vis_comparacao)
+```
+
+## RESUMO DO PROCESSO DE IMPUTAÇÃO
+```{r}
+cat("✓ Dados originais criados:", n, "observações\n")
+cat("✓ Variáveis com missings introduzidos:", 
+    sum(resumo_missing$n_missing > 0), "\n")
+cat("✓ Total de valores faltantes:", sum(resumo_missing$n_missing), "\n")
+cat("✓ Método de imputação: Random Forest (missForest)\n")
+cat("✓ Número de árvores utilizadas: 100\n")
+cat("✓ NRMSE médio:", round(resultado_imputacao$OOBerror[1], 4), "\n")
+cat("✓ Melhoria média sobre imputação por média:", 
+    round(mean(metricas_media$melhoria_percentual), 1), "%\n\n")
+```
+
+## CONCLUSÃO
+Random Forest capturou com sucesso as relações não-lineares presentes nos dados, gerando imputações que preservam a estrutura e distribuição dos valores originais. Este método é superior à imputação simples por média, especialmente quando há interações complexas entre variáveis.  
+
+## PASSO 9: EXPORTAR DADOS IMPUTADOS
+```{r eval=FALSE}
+# Salvar dados imputados
+write_csv(dados_imputados, "dados_imputados_rf.csv")
+```
+
