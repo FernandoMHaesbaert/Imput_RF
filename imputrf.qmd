@@ -1,0 +1,270 @@
+---
+title: "TUTORIAL: IMPUTAÇÃO DE DADOS FALTANTES COM RANDOM FOREST"
+author: "Prof. Dr. Fernando Machado Haesbaert"
+format: html
+editor: visual
+---
+
+## PASSO 1: CARREGAR PACOTES NECESSÁRIOS
+
+```{r}
+pacotes <- c("tidyverse", "missForest", "naniar", "VIM", "patchwork", "randomForest")
+if(sum(as.numeric(!pacotes %in% installed.packages())) != 0){
+  instalador <- pacotes[!pacotes %in% installed.packages()]
+  for(i in 1:length(instalador)) {
+    install.packages(instalador, dependencies = T)
+  }
+}
+lapply(pacotes, library, character.only = T)
+```
+
+## PASSO 2: CRIAR DADOS DE EXEMPLO COM MISSINGS
+Vamos criar um dataset que simula dados reais com relações não-lineares entre variáveis.
+```{r}
+n <- 500  # Número de observações
+
+dados_completos <- tibble(
+  # Variável idade (20 a 70 anos)
+  idade = runif(n, 20, 70),
+  # Renda depende da idade de forma não-linear (curva quadrática)
+  renda = 2000 + 500 * idade - 3 * idade^2 + rnorm(n, 0, 5000),
+  # Anos de estudo (relacionado com idade e renda)
+  anos_estudo = 8 + 0.15 * idade + 0.0001 * renda + rnorm(n, 0, 2),
+  # Pontuação de crédito (depende de várias variáveis)
+  score_credito = 300 + 5 * anos_estudo + 0.01 * renda + 
+    2 * idade + rnorm(n, 0, 50),
+  # Gasto mensal (interação complexa)
+  gasto_mensal = 500 + 0.3 * renda - 10 * anos_estudo + 
+    0.05 * score_credito + rnorm(n, 0, 1000),
+  # Variável categórica: região
+  regiao = sample(c("Norte", "Sul", "Leste", "Oeste"), n, replace = TRUE)
+) |> 
+  # Garantir valores positivos e limites realistas
+  mutate(
+    renda = pmax(renda, 1000),
+    anos_estudo = pmax(pmin(anos_estudo, 20), 0),
+    score_credito = pmax(pmin(score_credito, 850), 300),
+    gasto_mensal = pmax(gasto_mensal, 0)
+  )
+
+# Visualizar os dados completos
+glimpse(dados_completos)
+```
+
+## PASSO 3: INTRODUZIR DADOS FALTANTES DE FORMA REALISTA
+Criar cópia dos dados e introduzir missings usando `MCAR` (Missing Completely At Random) em algumas variáveis e `MAR` (Missing At Random) em outras - mais realista.
+```{r}
+dados_com_missing <- dados_completos |> 
+  mutate(
+    # 20% de missings em renda (MCAR)
+    renda = if_else(runif(n) < 0.20, NA_real_, renda),
+    # Missings em anos_estudo dependem da idade (MAR)
+    # Pessoas mais jovens tendem a não responder
+    anos_estudo = if_else(idade < 30 & runif(n) < 0.25, 
+                          NA_real_, anos_estudo),
+    # 15% de missings em score_credito (MCAR)
+    score_credito = if_else(runif(n) < 0.15, NA_real_, score_credito),
+    # Missings em gasto_mensal relacionados com renda alta (MAR)
+    gasto_mensal = if_else(renda > 40000 & runif(n) < 0.30 | runif(n) < 0.10,
+                           NA_real_, gasto_mensal),
+    # 10% de missings em região
+    regiao = if_else(runif(n) < 0.10, NA_character_, regiao)
+  )
+```
+
+## PASSO 4: ANÁLISE EXPLORATÓRIA DOS DADOS FALTANTES
+```{r}
+# Contar missings por variável
+resumo_missing <- dados_com_missing |> 
+  summarise(across(everything(), ~sum(is.na(.)))) |> 
+  pivot_longer(everything(), 
+               names_to = "variavel", 
+               values_to = "n_missing") |> 
+  mutate(
+    perc_missing = round(n_missing / n * 100, 2),
+    total_obs = n
+  ) |> 
+  arrange(desc(n_missing))
+
+print(resumo_missing)
+```
+
+```{r}
+# Visualização 1: Padrão de dados faltantes
+vis_missing_1 <- ggplot(dados_com_missing, 
+                        aes(x = 1:nrow(dados_com_missing))) +
+  geom_miss_point(aes(y = renda), alpha = 0.4, size = 2) +
+  labs(title = "Padrão de Dados Faltantes: Renda",
+       subtitle = "Pontos vermelhos indicam valores ausentes",
+       x = "Índice da Observação",
+       y = "Renda") +
+  theme_minimal(base_size = 12) +
+  theme(plot.title = element_text(face = "bold"))
+
+# Visualização 2: Proporção de missings por variável
+vis_missing_2 <- resumo_missing |> 
+  filter(n_missing > 0) |> 
+  ggplot(aes(x = reorder(variavel, perc_missing), 
+             y = perc_missing,
+             fill = perc_missing)) +
+  geom_col() +
+  geom_text(aes(label = paste0(perc_missing, "%")), 
+            hjust = -0.2, size = 3.5) +
+  coord_flip() +
+  scale_fill_gradient(low = "#FEE5D9", high = "#A50F15") +
+  labs(title = "Proporção de Dados Faltantes por Variável",
+       x = NULL,
+       y = "Percentual de Valores Ausentes (%)") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "none",
+        plot.title = element_text(face = "bold")) +
+  ylim(0, max(resumo_missing$perc_missing) * 1.15)
+
+# Visualização 3: Matriz de padrões de missings
+vis_missing_3 <- gg_miss_upset(dados_com_missing, 
+                               nsets = 6,
+                               nintersects = 15)
+
+# Combinar visualizações
+print(vis_missing_1)
+print(vis_missing_2)
+print(vis_missing_3)
+```
+
+# PASSO 5: IMPUTAÇÃO COM RANDOM FOREST
+```{r}
+# Converter região para factor (necessário para missForest)
+dados_para_imputar <- dados_com_missing |> 
+  mutate(regiao = as.factor(regiao))
+```
+
+
+Para executar imputação com `missForest` estabeleço os seguintes parâmetros:
+- `ntree`: número de árvores na floresta  
+- `mtry`: número de variáveis testadas em cada divisão  
+- `maxiter`: máximo de iterações  
+- `verbose`: mostrar progresso  
+```{r}
+resultado_imputacao <- missForest(
+  xmis = as.data.frame(dados_para_imputar),
+  ntree = 100,           # 100 árvores para cada floresta
+  mtry = 2,              # Raiz quadrada do número de variáveis
+  maxiter = 10,          # Máximo de 10 iterações
+  verbose = TRUE         # Mostrar progresso
+)
+```
+
+Agora vamos extrair dados imputados
+```{r}
+dados_imputados <- as_tibble(resultado_imputacao$ximp) |> 
+  mutate(regiao = as.character(regiao))
+```
+
+### Informações de Erros de imputação
+```{r}
+cat("NRMSE (Normalized Root Mean Squared Error) para variáveis numéricas:\n")
+print(resultado_imputacao$OOBerror[1])  # Quanto menor, melhor
+cat("\nPFC (Proportion of Falsely Classified) para variáveis categóricas:\n")
+print(resultado_imputacao$OOBerror[2])  # Quanto menor, melhor
+```
+
+## PASSO 6: VALIDAÇÃO DA IMPUTAÇÃO
+Vamos comparar a distribuição das variáveis antes e depois da imputação.
+```{r}
+# Identificar quais valores foram imputados
+dados_comparacao <- dados_completos |> 
+  mutate(origem = "Original") |> 
+  bind_rows(
+    dados_imputados |> 
+      mutate(origem = "Imputado")
+  ) |> 
+  mutate(id = rep(1:n, 2)) |> 
+  # Criar flag para valores que foram imputados
+  left_join(
+    dados_com_missing |> 
+      mutate(id = row_number()) |> 
+      reframe(
+        id = id,
+        renda_era_missing = is.na(renda),
+        anos_estudo_era_missing = is.na(anos_estudo),
+        score_era_missing = is.na(score_credito),
+        gasto_era_missing = is.na(gasto_mensal)
+      ),
+    by = "id"
+  )
+
+
+# Visualização 4: Comparar distribuições - Renda
+vis_validacao_1 <- dados_comparacao |> 
+  filter(origem == "Original" | (origem == "Imputado" & renda_era_missing)) |> 
+  ggplot(aes(x = renda, fill = origem)) +
+  geom_density(alpha = 0.6) +
+  scale_fill_manual(values = c("Original" = "#2166AC", 
+                               "Imputado" = "#B2182B")) +
+  labs(title = "Distribuição da Renda: Original vs Imputado",
+       subtitle = "Os valores imputados seguem a distribuição original?",
+       x = "Renda",
+       y = "Densidade",
+       fill = "Tipo") +
+  theme_classic(base_size = 12) +
+  theme(plot.title = element_text(face = "bold"),
+        legend.position = "bottom")
+
+# Visualização 5: Comparar distribuições - Score de Crédito
+vis_validacao_2 <- dados_comparacao |> 
+  filter(origem == "Original" | (origem == "Imputado" & score_era_missing)) |> 
+  ggplot(aes(x = score_credito, fill = origem)) +
+  geom_density(alpha = 0.6) +
+  scale_fill_manual(values = c("Original" = "#2166AC", 
+                               "Imputado" = "#B2182B")) +
+  labs(title = "Distribuição do Score: Original vs Imputado",
+       x = "Score de Crédito",
+       y = "Densidade",
+       fill = "Tipo") +
+  theme_classic(base_size = 12) +
+  theme(plot.title = element_text(face = "bold"),
+        legend.position = "bottom")
+
+# Visualização 6: Boxplots comparativos
+vis_validacao_3 <- dados_comparacao |> 
+  filter(origem == "Original" | (origem == "Imputado" & gasto_era_missing)) |> 
+  ggplot(aes(x = origem, y = gasto_mensal, fill = origem)) +
+  geom_boxplot(alpha = 0.7) +
+  scale_fill_manual(values = c("Original" = "#2166AC", 
+                               "Imputado" = "#B2182B")) +
+  labs(title = "Gasto Mensal: Original vs Imputado",
+       x = NULL,
+       y = "Gasto Mensal") +
+  theme_classic(base_size = 12) +
+  theme(plot.title = element_text(face = "bold"),
+        legend.position = "none")
+
+# Visualização 7: Scatter plot - Relação entre variáveis
+vis_validacao_4 <- dados_comparacao |> 
+  filter(origem == "Imputado") |> 
+  ggplot(aes(x = idade, y = renda)) +
+  geom_point(aes(color = renda_era_missing), alpha = 0.6) +
+  geom_smooth(method = "loess", se = FALSE, color = "black", 
+              linewidth = 1, linetype = "dashed") +
+  scale_color_manual(
+    values = c("TRUE" = "#B2182B", "FALSE" = "#2166AC"),
+    labels = c("TRUE" = "Valor Imputado", "FALSE" = "Valor Original")
+  ) +
+  labs(title = "Relação Idade vs Renda",
+       subtitle = "Valores imputados preservam a relação não-linear",
+       x = "Idade",
+       y = "Renda",
+       color = NULL) +
+  theme_classic(base_size = 12) +
+  theme(plot.title = element_text(face = "bold"),
+        legend.position = "bottom")
+
+# Imprimir visualizações de validação
+print(vis_validacao_1)
+print(vis_validacao_2)
+print(vis_validacao_3)
+print(vis_validacao_4)
+```
+
+
+
