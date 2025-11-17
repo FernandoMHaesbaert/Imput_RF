@@ -193,12 +193,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 500
 Columns: 6
-$ idade         &lt;dbl&gt; 65.13286, 37.39807, 50.49593, 64.87411, 58.11117, 30.327…
-$ renda         &lt;dbl&gt; 16149.894, 9377.345, 13104.221, 14717.515, 25564.177, 96…
-$ anos_estudo   &lt;dbl&gt; 20.000000, 17.231169, 14.348761, 20.000000, 16.324149, 1…
-$ score_credito &lt;dbl&gt; 663.9602, 536.4121, 606.6363, 622.1322, 761.2034, 499.47…
-$ gasto_mensal  &lt;dbl&gt; 6028.397, 1882.662, 3795.840, 5635.917, 8283.973, 2737.3…
-$ regiao        &lt;chr&gt; "Oeste", "Leste", "Norte", "Norte", "Norte", "Leste", "N…</code></pre>
+$ idade         &lt;dbl&gt; 65.70600, 53.25204, 51.95191, 28.42161, 51.79827, 28.589…
+$ renda         &lt;dbl&gt; 21210.249, 14151.038, 22750.717, 21889.524, 24653.446, 1…
+$ anos_estudo   &lt;dbl&gt; 18.45166, 18.30477, 14.26286, 15.40780, 19.79574, 7.6773…
+$ score_credito &lt;dbl&gt; 764.8162, 662.5703, 742.9540, 634.2709, 757.0938, 590.25…
+$ gasto_mensal  &lt;dbl&gt; 6381.3801, 4341.0734, 7406.1504, 5843.9599, 6717.9034, 4…
+$ regiao        &lt;chr&gt; "Sul", "Sul", "Leste", "Norte", "Sul", "Sul", "Oeste", "…</code></pre>
 </div>
 </div>
 </section>
@@ -244,11 +244,11 @@ $ regiao        &lt;chr&gt; "Oeste", "Leste", "Norte", "Norte", "Norte", "Leste"
 <pre><code># A tibble: 6 × 4
   variavel      n_missing perc_missing total_obs
   &lt;chr&gt;             &lt;int&gt;        &lt;dbl&gt;     &lt;dbl&gt;
-1 renda                98         19.6       500
-2 gasto_mensal         73         14.6       500
-3 score_credito        71         14.2       500
-4 regiao               38          7.6       500
-5 anos_estudo          30          6         500
+1 renda               102         20.4       500
+2 score_credito        83         16.6       500
+3 gasto_mensal         65         13         500
+4 regiao               50         10         500
+5 anos_estudo          34          6.8       500
 6 idade                 0          0         500</code></pre>
 </div>
 </div>
@@ -336,29 +336,39 @@ $ regiao        &lt;chr&gt; "Oeste", "Leste", "Norte", "Norte", "Norte", "Leste"
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  missForest iteration 1 in progress...done!
-    estimated error(s): 0.1734929 0.7748918 
-    difference(s): 0.01386291 0.06 
+    estimated error(s): 0.1802504 0.72 
+    difference(s): 0.01215697 0.074 
     time: 0.16 seconds
 
   missForest iteration 2 in progress...done!
-    estimated error(s): 0.1677054 0.7380952 
-    difference(s): 0.0001845392 0.036 
-    time: 0.12 seconds
+    estimated error(s): 0.176472 0.6866667 
+    difference(s): 0.0002999954 0.046 
+    time: 0.14 seconds
 
   missForest iteration 3 in progress...done!
-    estimated error(s): 0.1642663 0.7640693 
-    difference(s): 8.265174e-05 0.032 
-    time: 0.17 seconds
+    estimated error(s): 0.1747374 0.7088889 
+    difference(s): 0.0002331696 0.036 
+    time: 0.14 seconds
 
   missForest iteration 4 in progress...done!
-    estimated error(s): 0.1647289 0.7380952 
-    difference(s): 7.490485e-05 0.014 
-    time: 0.22 seconds
+    estimated error(s): 0.1769141 0.6933333 
+    difference(s): 0.0001003542 0.026 
+    time: 0.12 seconds
 
   missForest iteration 5 in progress...done!
-    estimated error(s): 0.1638715 0.7467532 
-    difference(s): 7.651545e-05 0.02 
-    time: 0.14 seconds</code></pre>
+    estimated error(s): 0.1778907 0.7 
+    difference(s): 0.0001084176 0.018 
+    time: 0.14 seconds
+
+  missForest iteration 6 in progress...done!
+    estimated error(s): 0.1781782 0.7022222 
+    difference(s): 8.033496e-05 0.018 
+    time: 0.14 seconds
+
+  missForest iteration 7 in progress...done!
+    estimated error(s): 0.1745193 0.7088889 
+    difference(s): 9.338581e-05 0.018 
+    time: 0.13 seconds</code></pre>
 </div>
 </div>
 <p>Agora vamos extrair dados imputados</p>
@@ -376,7 +386,7 @@ $ regiao        &lt;chr&gt; "Oeste", "Leste", "Norte", "Norte", "Norte", "Leste"
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(resultado_imputacao<span class="sc">$</span>OOBerror[<span class="dv">1</span>])  <span class="co"># Quanto menor, melhor</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    NRMSE 
-0.1647289 </code></pre>
+0.1781782 </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">PFC (Proportion of Falsely Classified) para variáveis categóricas:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -386,7 +396,7 @@ PFC (Proportion of Falsely Classified) para variáveis categóricas:</code></pre
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(resultado_imputacao<span class="sc">$</span>OOBerror[<span class="dv">2</span>])  <span class="co"># Quanto menor, melhor</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      PFC 
-0.7380952 </code></pre>
+0.7022222 </code></pre>
 </div>
 </div>
 </section>
@@ -518,6 +528,230 @@ PFC (Proportion of Falsely Classified) para variáveis categóricas:</code></pre
 </figure>
 </div>
 </div>
+</div>
+</section>
+<section id="passo-7-métricas-quantitativas-de-validação" class="level2">
+<h2 class="anchored" data-anchor-id="passo-7-métricas-quantitativas-de-validação">PASSO 7: MÉTRICAS QUANTITATIVAS DE VALIDAÇÃO</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Função para calcular RMSE</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>calcular_rmse <span class="ot">&lt;-</span> <span class="cf">function</span>(original, imputado, indices_missing) {</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  valores_originais <span class="ot">&lt;-</span> original[indices_missing]</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  valores_imputados <span class="ot">&lt;-</span> imputado[indices_missing]</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sqrt</span>(<span class="fu">mean</span>((valores_originais <span class="sc">-</span> valores_imputados)<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Função para calcular MAE</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>calcular_mae <span class="ot">&lt;-</span> <span class="cf">function</span>(original, imputado, indices_missing) {</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  valores_originais <span class="ot">&lt;-</span> original[indices_missing]</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  valores_imputados <span class="ot">&lt;-</span> imputado[indices_missing]</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>(<span class="fu">abs</span>(valores_originais <span class="sc">-</span> valores_imputados))</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular métricas para cada variável</span></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>indices_missing_renda <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">is.na</span>(dados_com_missing<span class="sc">$</span>renda))</span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>indices_missing_anos <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">is.na</span>(dados_com_missing<span class="sc">$</span>anos_estudo))</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>indices_missing_score <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">is.na</span>(dados_com_missing<span class="sc">$</span>score_credito))</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>indices_missing_gasto <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">is.na</span>(dados_com_missing<span class="sc">$</span>gasto_mensal))</span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>metricas_validacao <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">variavel =</span> <span class="fu">c</span>(<span class="st">"Renda"</span>, <span class="st">"Anos de Estudo"</span>, <span class="st">"Score de Crédito"</span>, <span class="st">"Gasto Mensal"</span>),</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">rmse =</span> <span class="fu">c</span>(</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calcular_rmse</span>(dados_completos<span class="sc">$</span>renda, dados_imputados<span class="sc">$</span>renda, </span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>                  indices_missing_renda),</span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calcular_rmse</span>(dados_completos<span class="sc">$</span>anos_estudo, dados_imputados<span class="sc">$</span>anos_estudo, </span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>                  indices_missing_anos),</span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calcular_rmse</span>(dados_completos<span class="sc">$</span>score_credito, dados_imputados<span class="sc">$</span>score_credito, </span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>                  indices_missing_score),</span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calcular_rmse</span>(dados_completos<span class="sc">$</span>gasto_mensal, dados_imputados<span class="sc">$</span>gasto_mensal, </span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>                  indices_missing_gasto)</span>
+<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">mae =</span> <span class="fu">c</span>(</span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calcular_mae</span>(dados_completos<span class="sc">$</span>renda, dados_imputados<span class="sc">$</span>renda, </span>
+<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a>                 indices_missing_renda),</span>
+<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calcular_mae</span>(dados_completos<span class="sc">$</span>anos_estudo, dados_imputados<span class="sc">$</span>anos_estudo, </span>
+<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a>                 indices_missing_anos),</span>
+<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calcular_mae</span>(dados_completos<span class="sc">$</span>score_credito, dados_imputados<span class="sc">$</span>score_credito, </span>
+<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a>                 indices_missing_score),</span>
+<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calcular_mae</span>(dados_completos<span class="sc">$</span>gasto_mensal, dados_imputados<span class="sc">$</span>gasto_mensal, </span>
+<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a>                 indices_missing_gasto)</span>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">rmse =</span> <span class="fu">round</span>(rmse, <span class="dv">2</span>),</span>
+<span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">mae =</span> <span class="fu">round</span>(mae, <span class="dv">2</span>)</span>
+<span id="cb28-47"><a href="#cb28-47" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb28-48"><a href="#cb28-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-49"><a href="#cb28-49" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(metricas_validacao)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 3
+  variavel            rmse     mae
+  &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt;
+1 Renda            3126.   2445.  
+2 Anos de Estudo      2.27    1.79
+3 Score de Crédito   56.5    47.3 
+4 Gasto Mensal     1229.    920.  </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualização 8: Métricas de erro</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>vis_metricas <span class="ot">&lt;-</span> metricas_validacao <span class="sc">%&gt;%</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(rmse, mae), </span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">"metrica"</span>, </span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"valor"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> variavel, <span class="at">y =</span> valor, <span class="at">fill =</span> metrica)) <span class="sc">+</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"dodge"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(valor, <span class="dv">1</span>)), </span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.9</span>),</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"rmse"</span> <span class="ot">=</span> <span class="st">"#D6604D"</span>, <span class="st">"mae"</span> <span class="ot">=</span> <span class="st">"#4393C3"</span>),</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"rmse"</span> <span class="ot">=</span> <span class="st">"RMSE"</span>, <span class="st">"mae"</span> <span class="ot">=</span> <span class="st">"MAE"</span>)</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Erro de Imputação por Variável"</span>,</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"RMSE = Root Mean Squared Error | MAE = Mean Absolute Error"</span>,</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>,</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Valor do Erro"</span>,</span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Métrica"</span>) <span class="sc">+</span></span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(vis_metricas)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="imputrf_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="passo-8-comparação-com-método-simples-média" class="level2">
+<h2 class="anchored" data-anchor-id="passo-8-comparação-com-método-simples-média">PASSO 8: COMPARAÇÃO COM MÉTODO SIMPLES (MÉDIA)</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Imputação simples por média</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>dados_imputados_media <span class="ot">&lt;-</span> dados_com_missing <span class="sc">%&gt;%</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">renda =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(renda), <span class="fu">mean</span>(renda, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), renda),</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">anos_estudo =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(anos_estudo), </span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">mean</span>(anos_estudo, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), anos_estudo),</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">score_credito =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(score_credito), </span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>                            <span class="fu">mean</span>(score_credito, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), score_credito),</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">gasto_mensal =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(gasto_mensal), </span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">mean</span>(gasto_mensal, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), gasto_mensal)</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular métricas para imputação por média</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>metricas_media <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">variavel =</span> <span class="fu">c</span>(<span class="st">"Renda"</span>, <span class="st">"Anos de Estudo"</span>, <span class="st">"Score de Crédito"</span>, <span class="st">"Gasto Mensal"</span>),</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">rmse_rf =</span> metricas_validacao<span class="sc">$</span>rmse,</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">rmse_media =</span> <span class="fu">c</span>(</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calcular_rmse</span>(dados_completos<span class="sc">$</span>renda, dados_imputados_media<span class="sc">$</span>renda, </span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>                  indices_missing_renda),</span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calcular_rmse</span>(dados_completos<span class="sc">$</span>anos_estudo, </span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>                  dados_imputados_media<span class="sc">$</span>anos_estudo, indices_missing_anos),</span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calcular_rmse</span>(dados_completos<span class="sc">$</span>score_credito, </span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>                  dados_imputados_media<span class="sc">$</span>score_credito, indices_missing_score),</span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calcular_rmse</span>(dados_completos<span class="sc">$</span>gasto_mensal, </span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>                  dados_imputados_media<span class="sc">$</span>gasto_mensal, indices_missing_gasto)</span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">rmse_media =</span> <span class="fu">round</span>(rmse_media, <span class="dv">2</span>),</span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">melhoria_percentual =</span> <span class="fu">round</span>((rmse_media <span class="sc">-</span> rmse_rf) <span class="sc">/</span> rmse_media <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>)</span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(metricas_media)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 4
+  variavel         rmse_rf rmse_media melhoria_percentual
+  &lt;chr&gt;              &lt;dbl&gt;      &lt;dbl&gt;               &lt;dbl&gt;
+1 Renda            3126.      6335.                  50.6
+2 Anos de Estudo      2.27       4.38                48.2
+3 Score de Crédito   56.5      100.                  43.5
+4 Gasto Mensal     1229.      2047.                  40  </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualização 9: Comparação de métodos</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>vis_comparacao <span class="ot">&lt;-</span> metricas_media <span class="sc">%&gt;%</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(variavel, rmse_rf, rmse_media) <span class="sc">%&gt;%</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"rmse"</span>), </span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">"metodo"</span>, </span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"rmse"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">metodo =</span> <span class="fu">recode</span>(metodo,</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"rmse_rf"</span> <span class="ot">=</span> <span class="st">"Random Forest"</span>,</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"rmse_media"</span> <span class="ot">=</span> <span class="st">"Média Simples"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> variavel, <span class="at">y =</span> rmse, <span class="at">fill =</span> metodo)) <span class="sc">+</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"dodge"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(rmse, <span class="dv">1</span>)), </span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.9</span>),</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Random Forest"</span> <span class="ot">=</span> <span class="st">"#1B9E77"</span>, </span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Média Simples"</span> <span class="ot">=</span> <span class="st">"#D95F02"</span>)) <span class="sc">+</span></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Comparação de Métodos de Imputação"</span>,</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Random Forest consistentemente supera imputação por média"</span>,</span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>,</span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"RMSE"</span>,</span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Método"</span>) <span class="sc">+</span></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(vis_comparacao)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="imputrf_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="resumo-do-processo-de-imputação" class="level2">
+<h2 class="anchored" data-anchor-id="resumo-do-processo-de-imputação">RESUMO DO PROCESSO DE IMPUTAÇÃO</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"✓ Dados originais criados:"</span>, n, <span class="st">"observações</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>✓ Dados originais criados: 500 observações</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"✓ Variáveis com missings introduzidos:"</span>, </span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum</span>(resumo_missing<span class="sc">$</span>n_missing <span class="sc">&gt;</span> <span class="dv">0</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>✓ Variáveis com missings introduzidos: 5 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"✓ Total de valores faltantes:"</span>, <span class="fu">sum</span>(resumo_missing<span class="sc">$</span>n_missing), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>✓ Total de valores faltantes: 334 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"✓ Método de imputação: Random Forest (missForest)</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>✓ Método de imputação: Random Forest (missForest)</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"✓ Número de árvores utilizadas: 100</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>✓ Número de árvores utilizadas: 100</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"✓ NRMSE médio:"</span>, <span class="fu">round</span>(resultado_imputacao<span class="sc">$</span>OOBerror[<span class="dv">1</span>], <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>✓ NRMSE médio: 0.1782 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"✓ Melhoria média sobre imputação por média:"</span>, </span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(<span class="fu">mean</span>(metricas_media<span class="sc">$</span>melhoria_percentual), <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>✓ Melhoria média sobre imputação por média: 45.6 %</code></pre>
+</div>
+</div>
+</section>
+<section id="conclusão" class="level2">
+<h2 class="anchored" data-anchor-id="conclusão">CONCLUSÃO</h2>
+<p>Random Forest capturou com sucesso as relações não-lineares presentes nos dados, gerando imputações que preservam a estrutura e distribuição dos valores originais. Este método é superior à imputação simples por média, especialmente quando há interações complexas entre variáveis.</p>
+</section>
+<section id="passo-9-exportar-dados-imputados" class="level2">
+<h2 class="anchored" data-anchor-id="passo-9-exportar-dados-imputados">PASSO 9: EXPORTAR DADOS IMPUTADOS</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Salvar dados imputados</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(dados_imputados, <span class="st">"dados_imputados_rf.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 </section>
