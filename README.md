@@ -24,3 +24,6 @@ imputed$ximp |>
 **Referências**  
 Stekhoven, D. J.; Bühlmann, P. **MissForest — nonparametric missing value imputation for mixed-type data.** *Bioinformatics*, 28(1), 112–118. 2012. <https://doi.org/10.1093/bioinformatics/btr597>.  
 Salman, H. A.;  Kalakech, A.; Steiti, A. **Random Forest Algorithm Overview**. *Babylonian Journal of Machine Learning*, 2024, 69-79. 2024. <https://doi.org/10.58496/BJML/2024/007>.
+
+
+**Acesse a página principal**: <https://fernandomhaesbaert.github.io/Imput_RF/>
